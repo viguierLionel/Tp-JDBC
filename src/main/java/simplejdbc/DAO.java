@@ -1,4 +1,4 @@
-package simplejdbc;
+    package simplejdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
+import static simplejdbc.TestJDBC.getConnectionWithDriverManager;
 
 public class DAO {
 
@@ -80,7 +81,21 @@ public class DAO {
 	 * @throws DAOException
 	 */
 	public int numberOfOrdersForCustomer(int customerId) throws DAOException {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+            
+            String sql = "SELECT COUNT (ORDER_NUM) as orders FROM PURCHASE_ORDER WHERE CUSTOMER_ID = ?";
+		try (Connection connection = myDataSource.getConnection();
+			PreparedStatement stmt = connection.prepareStatement(sql)) {
+			// Définir la valeur du paramètre
+			stmt.setInt(1, customerId);
+                        ResultSet rs = stmt.executeQuery();
+                        rs.next();
+			return rs.getInt("orders");
+                        
+
+		} catch (SQLException ex) {
+			Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
+			throw new DAOException(ex.getMessage());
+		}
 	}
 
 	/**
@@ -91,7 +106,22 @@ public class DAO {
 	 * @throws DAOException
 	 */
 	CustomerEntity findCustomer(int customerID) throws DAOException {
-		throw new UnsupportedOperationException("Pas encore implémenté");
+            
+       		String sql = "SELECT * FROM CUSTOMER where CUSTOMER_ID = ? ;";
+                CustomerEntity consumer = new CustomerEntity(customerID, sql, sql);
+		try (Connection connection = myDataSource.getConnection();
+			PreparedStatement stmt = connection.prepareStatement(sql)) {
+			// Définir la valeur du paramètre
+			stmt.setInt(1, customerID);
+                        ResultSet rs = stmt.executeQuery();
+                        rs.next();
+                        consumer = rs.getObjec( 4, CustomerEntity) ;
+			return 
+
+		} catch (SQLException ex) {
+			Logger.getLogger("DAO").log(Level.SEVERE, null, ex);
+			throw new DAOException(ex.getMessage());
+		}
 	}
 
 	/**
